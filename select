@@ -1,0 +1,3 @@
+#!/bin/bash
+
+awk '$NR == $n' n=$1 $2

@@ -1,0 +1,8 @@
+# Compilation debris
+sd
+mse
+*.o
+
+# Test files
+file1
+file2
