@@ -6,3 +6,7 @@ mse
 # Test files
 file1
 file2
+
+# Sandbox
+tmp
+tmp/**/*
