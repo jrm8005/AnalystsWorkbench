@@ -15,6 +15,10 @@ Multiplication program (able to work on any kind of input, see first TODO item
 
 Normalization programs
 
+To/From CSV files, or just ``Delimited files'' -- there's already a program for
+	this, called Awk, but a wrapper around it or something small in C might
+	be worth doing instead to clarify semantics and save typing
+
 ===============================================================================
 
 TODOS:
