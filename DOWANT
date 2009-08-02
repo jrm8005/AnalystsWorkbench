@@ -1,0 +1,45 @@
+THINGS WE WANT (feel free to add):
+
+
+Laundry list of needed tools:
+
+FFT
+
+Least-squares fitting (imagined usage: graph <{lsf data} <{cat data} | plot)
+	That Useless Use of Cat is a problem with rc, not me.
+
+Statistical distribution programs - chi-square, poisson, normal, gaussian
+
+Multiplication program (able to work on any kind of input, see first TODO item
+	below)
+
+Normalization programs
+
+===============================================================================
+
+TODOS:
+
+Make everything use the lexer so that matrices, vectors, scalars all have
+meaningful input to every program unless it's absolutely impossible for
+them to have meaning. e.g., a multiplier program should check its inputs
+to see if it gets 2 matrices, 2 vectors, 2 scalars, vector and matrix, matrix
+and scalar, vector and scalar and do the right thing in *every* case.
+
+Programs need to handle more than just standard input, but also files. See
+the Plan 9 cat.c source code file for the perfect implementation: make for
+example the main() routine in sd.c a function taking a FILE* and have main
+just loop over every argument opening that file and calling the routine, else
+giving the routine stdin as an open file.
+
+Programs probably need comments, better efficiency, more elegance -- I'm not
+rob or ken.
+
+===============================================================================
+
+Useful tools that should be mentioned in a Readme:
+
+Plan 9 graph, plot, factor, primes, seq, rc, hoc...
+paste
+Moreutils, particularly vipe for editing pipes and pee for enhanced tee
+gnuplot, plotutils
+
