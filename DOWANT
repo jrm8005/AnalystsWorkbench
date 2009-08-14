@@ -8,7 +8,7 @@ FFT
 Least-squares fitting (imagined usage: graph <{lsf data} <{cat data} | plot)
 	That Useless Use of Cat is a problem with rc, not me.
 
-Statistical distribution programs - chi-square, poisson, normal, gaussian
+Statistical distribution programs - chi-square, poisson, gaussian
 
 Multiplication program (able to work on any kind of input, see first TODO item
 	below)
