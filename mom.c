@@ -1,10 +1,7 @@
 # include <u.h>
 # include <libc.h>
 # include <bio.h>
-<<<<<<< HEAD
 # include <stdio.h>
-=======
->>>>>>> origin
 
 enum{
 	MAXCOL = 1024,	/* maximum number of columns */
@@ -22,12 +19,7 @@ struct Moments{
 Moments momtab[MAXCOL];
 int ncol;		/* number of columns */
 
-<<<<<<< HEAD
 void fill(char *, Biobuf *);
-=======
-void fill(Biobuf *);
-int iszero(char *);
->>>>>>> origin
 void addval(Moments *, double);
 void usage(void);
 
@@ -55,7 +47,6 @@ main(int argc, char *argv[])
 		usage();
 	}ARGEND
 	memset(momtab, 0, sizeof(momtab));
-<<<<<<< HEAD
 	if(argc){
 		for(; argc--; argv++)
 			if((bf = Bopen(*argv, OREAD)) == nil)
@@ -70,23 +61,6 @@ main(int argc, char *argv[])
 	}
 	sprint(fmt1, "%%.%dg ", pres);
 	sprint(fmt2, "%%.%dg\n", pres);
-=======
-	if(argc)
-		while(argc--){
-			if((bf = Bopen(*argv++, OREAD)) == nil){
-				fprint(2, "%s: unable to open %s: %r\n", argv0, *(argv-1));
-				continue;
-			}
-			fill(bf);
-			Bterm(bf);
-		}
-	else{
-		Binit(&bstdin, 0, OREAD);
-		fill(&bstdin);
-	}
-	sprint(fmt1, "%%.%de ", pres);
-	sprint(fmt2, "%%.%de\n", pres);
->>>>>>> origin
 	for(i = 0; i < ncol; i++)
 		print(i < ncol-1 ? fmt1 : fmt2, momtab[i].m1);
 	for(i = 0; i < ncol; i++){
@@ -95,21 +69,13 @@ main(int argc, char *argv[])
 		print(i < ncol-1 ? fmt1 : fmt2, sd[i]);
 	}
 	for(i = 0; i < ncol; i++){
-<<<<<<< HEAD
 		if(sd[i] > 0.0)
-=======
-		if(sd[i] > 0)
->>>>>>> origin
 			print(i < ncol-1 ? fmt1 : fmt2, momtab[i].m3/(n[i]*pow(sd[i], 3)));
 		else
 			print(i < ncol-1 ? "NaN " : "NaN\n");
 	}
 	for(i = 0; i < ncol; i++){
-<<<<<<< HEAD
 		if(sd[i] > 0.0)
-=======
-		if(sd[i] > 0)
->>>>>>> origin
 			print(i < ncol-1 ? fmt1 : fmt2, momtab[i].m4/(n[i]*pow(sd[i], 4)));
 		else
 			print(i < ncol-1 ? "NaN " : "NaN\n");
@@ -117,7 +83,6 @@ main(int argc, char *argv[])
 	exits(nil);
 }
 
-<<<<<<< HEAD
 /* fill momtab with data in bf */
 void
 fill(char *name, Biobuf *bf)
@@ -143,40 +108,6 @@ fill(char *name, Biobuf *bf)
 		fprint(2, "%s: %s: line %ld too long\n", argv0, name, nl);
 		exits("Brdline");
 	}
-=======
-/* fill momtab with data in file bf */
-void
-fill(Biobuf *bf)
-{
-	char *tokens[MAXCOL];
-	char *line;
-	int i, ntok;
-	double x;
-
-	/* this will fail for lines longer than the bio buffer; Brstr is an alternative */
-	while(line = Brdline(bf, '\n')){
-		line[Blinelen(bf)-1] = '\0';
-		ntok = 0;
-		while(ntok < MAXCOL && (tokens[ntok] = strtok(ntok == 0 ? line : nil, " \t")) != nil)
-			ntok++;
-		if(ntok > ncol)
-			ncol = ntok;
-		for(i = 0; i < ntok; i++){
-			if((x = atof(tokens[i])) == 0.0 && !iszero(tokens[i]))
-				continue;
-			addval(momtab+i, x);
-		}
-	}
-}
-
-/* check if s contains a valid zero representation */
-int
-iszero(char *s)
-{
-	if(*s == '-' || *s == '+')
-		s++;
-	return *s == '0';
->>>>>>> origin
 }
 
 /* add val to our calculations; formulas deduced from "Formulas for Robust,
@@ -202,10 +133,6 @@ addval(Moments *m, double val)
 void
 usage()
 {
-<<<<<<< HEAD
 	fprint(2, "usage: %s [-p N] [file ...]\n", argv0);
-=======
-	fprint(2, "usage: %s [-p N] [file] ...\n", argv0);
->>>>>>> origin
 	exits("usage");
 }
