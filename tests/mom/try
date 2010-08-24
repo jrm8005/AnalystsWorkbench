@@ -1,0 +1,71 @@
+#!/bin/rc
+
+pres = 4
+gstr = `{awk '
+	BEGIN{
+		printf "^[0-9]*\\."
+		for(i = 1; i <= '$pres'+1; i++)
+			printf "3"
+		printf " "
+	}
+	'}
+if(! ~ $PLAN9 ''){
+	path = ($PLAN9/bin .)
+	pres = `{echo $pres+1 | bc}
+}
+echo -n precision test:^' '
+stat = OK
+./mom -p -0.01 >[2=] || ./mom -p 16 >[2=]
+if(~ $status '')
+	stat = FAILED
+echo '0
+0
+1' | ./mom -p $pres | grep -s $gstr
+if(! ~ $status '|')
+	stat = FAILED
+echo $stat
+echo -n moment test:^' '
+stat = OK
+./mom -p 10 xaa xab | awk '
+	NR == 1 && ( isintol(0.5004951, $1) || isintol(0.2888878, $2) ||
+	isintol(-0.005464582, $3) || isintol(1.801916, $4) ) ||
+	NR == 2 && ( isintol(4338.771, $1) || isintol(2546.682, $2) ||
+	isintol(0.0259216, $3) || isintol(1.791378, $4) ) ||
+	NR == 3 && ( isintol(-2203654, $1) || isintol(9.957296e-05, $2) ||
+	isintol(-0.01346009, $3) || isintol(2.993829, $4) ) ||
+	NR == 4 && ( isintol(3.976375, $1) || isintol(1.996826, $2) ||
+	isintol(0.5416699, $3) || isintol(3.266842, $4) ) ||
+	NR == 5 && ( isintol(2.987306, $1) || isintol(2497.066, $2) ||
+	isintol(-0.05747501, $3) || isintol(2.903827, $4) ){
+			exit 1
+	}
+	
+	# check if a and b have an acceptable difference
+	function isintol(a, b){
+		if(mod(a-b)/a > 0.01)
+			return 1
+		return 0
+	}
+	function mod(a){
+		return a >= 0.0 ? a : -a
+	}
+'
+if(! ~ $status '|')
+	stat = FAILED
+echo $stat
+echo -n garbage input test:^' '
+stat = OK
+./mom xac | awk '
+	$0 !~ /^0 NaN NaN NaN$/{
+		exit 1
+	}
+'
+if(! ~ $status '|')
+	stat = FAILED
+echo $stat
+echo -n mixed input test:^' '
+stat = OK
+cmp -s <{./mom -p $pres xad xae xaf} mix.ref
+if(! ~ $status '')
+	stat = FAILED
+echo $stat

@@ -1,0 +1,67 @@
+#!/bin/rc
+
+pres = 7
+astr = `{awk '
+	BEGIN{
+		printf "^0?\\."
+		for(i = 1; i <= '$pres'+1; i++)
+			printf "3"
+		printf "$"
+	}
+	'}
+if(! ~ $PLAN9 ''){
+	path = ($PLAN9/bin .)
+	pres = `{echo $pres+1 | bc}
+}
+echo -n precision test:^' '
+stat = OK
+./cov -p -0.01 >[2=] || ./cov -p 16 >[2=]
+if(~ $status '')
+	stat = FAILED
+echo '1 0.333333333333333
+-1 -0.333333333333333' | ./cov -p $pres | awk 'NR == 1 && $2 !~ /'$astr'/{exit 1}'
+if(! ~ $status '|')
+	stat = FAILED
+echo $stat
+echo -n covariance test:^' '
+stat = OK
+./cov -p $pres xaa xab | awk '
+	NR == 1 && ( isintol(208.51914, $1) || isintol(0.3279052, $2) ||
+	isintol(18.349685 , $3) || isintol(1.571167, $4) ) ||
+	NR == 2 && ( isintol(0.3279052, $1) || isintol(4.848869, $2) ||
+	isintol(0.028855664, $3) || isintol(26.393832, $4) ) ||
+	NR == 3 && ( isintol(18.349685, $1) || isintol(0.028855664, $2) ||
+	isintol(1.6147723, $3) || isintol(0.13826278, $4) ) ||
+	NR == 4 && ( isintol(1.5711674, $1) || isintol(26.393832, $2) ||
+	isintol(0.13826278, $3) || isintol(144.35885, $4) ){
+		exit 1
+	}
+
+	# check if a and b have an acceptable difference
+	function isintol(a, b){
+		if(mod(a-b)/a > 0.01)
+			return 1
+		return 0
+	}
+	function mod(a){
+		return a >= 0.0 ? a : -a
+	}
+'
+if(! ~ $status '|')
+	stat = FAILED
+echo $stat
+echo -n garbage input test:^' '
+stat = OK
+cmp -s <{./cov garb} garb.ref
+if(! ~ $status '')
+	stat = FAILED
+echo $stat
+echo -n mixed input test:^' '
+stat = OK
+cmp -s <{./cov -p 7 -r xad xae xaf | sed '
+	s/^(-?)\./\10./
+	s/ (-?)\./ \10./g
+	'} mix.ref
+if(! ~ $status '')
+	stat = FAILED
+echo $stat

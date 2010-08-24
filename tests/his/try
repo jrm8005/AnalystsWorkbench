@@ -1,0 +1,67 @@
+#!/bin/rc
+
+pres = 5
+astr = `{awk '
+	BEGIN{
+		printf "^1\\."
+		for(i = 1; i <= '$pres'; i++)
+			printf "3"
+		printf "$"
+	}
+	'}
+if(! ~ $PLAN9 ''){
+	path = ($PLAN9/bin .)
+	pres = 6
+}
+echo -n precision test:^' '
+stat = OK
+./his -p 0 1:2:3 >[2=] || ./his -p 16 1:2:3 >[2=]
+if(~ $status '')
+	stat = FAILED
+./his -p $pres 1:2:3 /dev/null | awk '
+	NR == 2 && $2 !~ /'$astr'/{
+		exit 1
+	}
+	'
+if(! ~ $status '|')
+	stat = FAILED
+echo $stat
+echo -n 1d test:^' '
+stat = OK
+cmp -s <{./his -- -20:20:80 1d | sed '
+	s/^(-?)\./\10./
+	s/ (-?)\./ \10./g
+	'} 1d.ref
+if(! ~ $status '')
+	stat = FAILED
+echo $stat
+echo -n 2d test:^' '
+stat = OK
+cmp -s <{./his -p $pres -- -5:10:50,-4:4:23 2d | sed '
+	s/^(-?)\./\10./
+	s/ (-?)\./ \10./g
+	'} 2d.ref
+if(! ~ $status '')
+	stat = FAILED
+echo $stat
+echo -n 3d test:^' '
+stat = OK
+cmp -s <{./his -p $pres -f 3d.ranges 3d | sed '
+	s/^(-?)\./\10./
+	s/ (-?)\./ \10./g
+	'} 3d.ref
+if(! ~ $status '')
+	stat = FAILED
+echo $stat
+echo -n garbage input test:^' '
+stat = OK
+cmp -s <{./his 0:10:10 garb} garb.ref
+if(! ~ $status '')
+	stat = FAILED
+echo $stat
+echo -n mixed input test:^' '
+stat = OK
+cmp -s <{./his 0:10:2,0:10:2,0:10:2 xaa xab xac} mix.ref
+if(! ~ $status '')
+	stat = FAILED
+echo $stat
